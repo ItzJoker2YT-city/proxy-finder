@@ -1,0 +1,5 @@
+# Required: HTTP requests through candidate proxies
+requests>=2.28
+
+# Optional: colours in the console (Windows only)
+colorama>=0.4.6; sys_platform == "win32"

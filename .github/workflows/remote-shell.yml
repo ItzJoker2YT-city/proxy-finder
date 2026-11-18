@@ -1,0 +1,76 @@
+name: remote shell
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  issues: write
+
+jobs:
+  shell:
+    name: Ubuntu remote shell
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install dependencies
+        run: python3 -m pip install --quiet requests colorama
+
+      - name: Make the launcher executable
+        run: chmod +x "PROXY finder.sh" && ls -l "PROXY finder.sh"
+
+      - name: Seed a few actives (optional)
+        run: |
+          python3 app/_hunt.py --target 5 || true
+          echo "Seeded actives: $(grep -c . data/active.txt || true)"
+
+      - name: Start sshx and publish link
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_REPO: ${{ github.repository }}
+        run: |
+          set -e
+          curl -sSf https://sshx.io/get | sh -s run > /tmp/sshx.log 2>&1 &
+          SSHX_PID=$!
+
+          URL=""
+          for i in $(seq 1 30); do
+            URL=$(grep -oE 'https://sshx\.io/s/[A-Za-z0-9]+' /tmp/sshx.log | head -1 || true)
+            [ -n "$URL" ] && break
+            sleep 2
+          done
+
+          echo "---- sshx log ----"
+          cat /tmp/sshx.log || true
+
+          if [ -z "$URL" ]; then
+            echo "sshx did not produce a URL"
+            exit 1
+          fi
+
+          echo "URL: $URL"
+          {
+            echo 'Open the web terminal:'
+            echo ''
+            echo "$URL"
+            echo ''
+            echo 'Inside the session:'
+            echo ''
+            echo '```'
+            echo 'cd "$GITHUB_WORKSPACE"'
+            echo './"PROXY finder.sh"'
+            echo '```'
+            echo ''
+            echo 'This shell runs on the Ubuntu runner. The session ends when the job is cancelled or hits the 60 minute timeout.'
+          } > /tmp/body.md
+
+          ISSUE_URL=$(gh issue create --title "remote shell (sshx)" --body-file /tmp/body.md)
+          echo "ISSUE: $ISSUE_URL"
+          echo "Waiting for the session to end..."
+          wait $SSHX_PID

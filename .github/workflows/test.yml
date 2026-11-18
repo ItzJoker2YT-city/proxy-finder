@@ -1,0 +1,84 @@
+name: Ubuntu smoke tests
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [ main ]
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    name: Ubuntu smoke tests
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install dependencies
+        run: |
+          python3 -m pip install --quiet --upgrade pip
+          python3 -m pip install --quiet requests colorama
+
+      - name: Syntax checks
+        run: |
+          set -e
+          bash -n "PROXY finder.sh"
+          python3 -m py_compile "app/PROXY CHECKER.py" "app/PROXY finder.py" "app/_hunt.py"
+          echo "SYNTAX OK"
+
+      - name: Launcher runs end to end
+        run: |
+          set -e
+          ls -l "PROXY finder.sh"
+          test -x "PROXY finder.sh" || { echo "launcher is not executable"; exit 1; }
+          out="$(printf 'abc\n\n' | ./"PROXY finder.sh" || true)"
+          echo "$out"
+          echo "$out" | grep -q "not a number"
+          echo "LAUNCHER OK"
+
+      - name: Menu smoke test (invalid input)
+        run: |
+          set -e
+          out="$(printf 'abc\n\n' | python3 'app/PROXY finder.py' || true)"
+          echo "$out"
+          echo "$out" | grep -q "not a number"
+          echo "MENU OK"
+
+      - name: Hunt test (ask for 10 more)
+        run: |
+          set -e
+          python3 app/_hunt.py --target 10
+          count=$(grep -c . data/active.txt || true)
+          if [ "$count" -eq 0 ]; then
+            echo "First batch was dry - trying one more round..."
+            python3 app/_hunt.py --target 5
+            count=$(grep -c . data/active.txt || true)
+          fi
+          echo "ACTIVE AFTER HUNT: $count"
+          test "$count" -gt 0
+
+      - name: Verify test (dead proxy removed)
+        run: |
+          set -e
+          before=$(grep -c . data/active.txt)
+          echo "127.0.0.1:1" >> data/active.txt
+          python3 app/_hunt.py --verify
+          after=$(grep -c . data/active.txt)
+          echo "VERIFY: before=$before after=$after"
+          if grep -qx "127.0.0.1:1" data/active.txt; then
+            echo "dead proxy was not removed"
+            exit 1
+          fi
+          echo "VERIFY OK"
+
+      - name: Result summary
+        run: |
+          echo "===== FIRST 10 ACTIVES ====="
+          head -10 data/active.txt || true
+          echo "TOTAL: $(grep -c . data/active.txt || true)"

@@ -1,0 +1,6 @@
+# Keep shell scripts LF so they run on Linux after any clone
+* text=auto eol=lf
+
+# Windows launchers want CRLF
+*.bat text eol=crlf
+*.cmd text eol=crlf

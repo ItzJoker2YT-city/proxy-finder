@@ -1,0 +1,10 @@
+free-proxy-list|https://raw.githubusercontent.com/ProxyScrape/free-proxy-list/main/proxies/protocols/http/data.txt
+proxy-list|https://raw.githubusercontent.com/SoliSpirit/proxy-list/main/http.txt
+Proxy-list|https://raw.githubusercontent.com/ShipHappensBro/Proxy-list/main/http.txt
+VMHeaven.io-Free-Proxy-List|https://raw.githubusercontent.com/vmheaven/VMHeaven.io-Free-Proxy-List/main/http.txt
+free-proxy-list|https://raw.githubusercontent.com/hproxy-com/free-proxy-list/main/http.txt
+sol-free-proxy-list|https://raw.githubusercontent.com/solproxy/sol-free-proxy-list/main/http.txt
+free-proxy-list|https://raw.githubusercontent.com/6yyn/free-proxy-list/main/http.txt
+free-proxy-list|https://raw.githubusercontent.com/hproxy-com/free-proxy-list/main/all.txt
+sol-free-proxy-list|https://raw.githubusercontent.com/solproxy/sol-free-proxy-list/main/all.txt
+free-proxy-list|https://raw.githubusercontent.com/FusionProxies/free-proxy-list/main/proxies/http.txt

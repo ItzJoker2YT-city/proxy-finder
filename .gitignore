@@ -1,0 +1,14 @@
+# Python
+__pycache__/
+*.py[cod]
+
+# Your proxy data stays local (sources.txt is the only tracked file)
+data/*
+!data/.gitkeep
+!data/sources.txt
+
+# Editor / OS noise
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
