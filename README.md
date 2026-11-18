@@ -1,5 +1,9 @@
 # Proxy Finder
 
+[![Ubuntu smoke tests](https://github.com/ItzJoker2YT-city/proxy-finder/actions/workflows/test.yml/badge.svg)](https://github.com/ItzJoker2YT-city/proxy-finder/actions/workflows/test.yml)
+[![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
+[![Platforms](https://img.shields.io/badge/platform-Windows%20%7C%20Linux%20%7C%20macOS-lightgrey.svg)](#quick-start)
+
 Find fresh working **HTTP proxies** from public lists, test them for real, and keep a clean list in `active.txt`.
 
 Type a number, wait a few seconds, get that many verified proxies. Dead ones are removed on demand and never come back.
