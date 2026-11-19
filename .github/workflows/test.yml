@@ -42,6 +42,21 @@ jobs:
           echo "$out" | grep -q "not a number"
           echo "LAUNCHER OK"
 
+      - name: Launcher self-heals on a machine without requests
+        run: |
+          set -e
+          # Simulate a stock Ubuntu: python3 exists, but 'requests' does not
+          python3 -m venv /tmp/barepy
+          rm -rf .venv
+          printf 'abc\n\n' > /tmp/input.txt
+          PATH="/tmp/barepy/bin:$PATH" ./"PROXY finder.sh" < /tmp/input.txt > /tmp/launcher.log 2>&1 || true
+          cat /tmp/launcher.log
+          grep -q "Setting up a local .venv" /tmp/launcher.log
+          test -x .venv/bin/python
+          .venv/bin/python -c "import requests" && echo "VENV HAS REQUESTS"
+          grep -q "not a number" /tmp/launcher.log
+          echo "SELF-HEAL OK"
+
       - name: Menu smoke test (invalid input)
         run: |
           set -e

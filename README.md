@@ -44,9 +44,15 @@ python -m pip install requests
 git clone https://github.com/ItzJoker2YT-city/proxy-finder.git
 cd proxy-finder
 
-python3 -m pip install -r requirements.txt
 chmod +x "PROXY finder.sh"
 ./"PROXY finder.sh"
+```
+
+That is the whole install. The launcher finds `requests` itself: when the distro blocks system pip (Ubuntu 23.04+ does, PEP 668) it builds a local `.venv` once and reuses it afterwards. To install it manually instead:
+
+```bash
+sudo apt install python3-requests     # Ubuntu / Debian
+python3 -m pip install requests       # macOS
 ```
 
 No `git`? Download the ZIP, extract it, and run the last two lines in that folder.

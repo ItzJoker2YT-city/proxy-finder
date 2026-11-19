@@ -1,4 +1,7 @@
 # Python
+# virtualenv created by the Linux launcher
+.venv/
+
 __pycache__/
 *.py[cod]
 
